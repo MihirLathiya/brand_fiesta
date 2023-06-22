@@ -1,3 +1,4 @@
+import 'package:brand_fiesta/Hive_model/all_banner_model.dart';
 import 'package:brand_fiesta/Hive_model/all_event_data_model.dart';
 import 'package:brand_fiesta/controller/home_controller.dart';
 import 'package:brand_fiesta/utils/app_color.dart';
@@ -31,10 +32,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 100,
+        toolbarHeight: 70,
+        // backgroundColor: Colors.red,
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SvgPicture.asset(
+                AssetPath.appLogo,
+                height: size * 40,
+                width: size * 40,
+              ),
+            ],
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
                   borderRadius: BorderRadius.circular(5),
@@ -66,91 +85,122 @@ class _HomeScreenState extends State<HomeScreen> {
           return SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CarouselSlider.builder(
-                  carouselController: controller.carouselController,
-                  itemCount: 3,
-                  itemBuilder:
-                      (BuildContext context, int itemIndex, int pageViewIndex) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        height: 180 * size,
-                        width: Get.width,
-                        imageUrl:
-                            'https://wallpapercave.com/fwp/wp12455757.jpg',
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: Icon(Icons.error_outline, color: AppColor.red),
-                        ),
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) {
-                          return Shimmer.fromColors(
-                            baseColor: Colors.grey.withOpacity(0.4),
-                            highlightColor: Colors.grey.withOpacity(0.2),
-                            enabled: true,
-                            child: Container(
-                              color: Colors.white,
-                            ),
+                ValueListenableBuilder<Box<AllBannerDetailModel>>(
+                  valueListenable: HiveBoxes.getBannerData().listenable(),
+                  builder: (context, value, _) {
+                    var data =
+                        value.values.toList().cast<AllBannerDetailModel>();
+
+                    return data.isEmpty
+                        ? Center(
+                            child: Text(
+                            'No Data',
+                            style: TextStyle(fontSize: 15),
+                          ))
+                        : Column(
+                            children: [
+                              CarouselSlider.builder(
+                                carouselController:
+                                    controller.carouselController,
+                                itemCount: data.length,
+                                itemBuilder: (BuildContext context,
+                                    int itemIndex, int pageViewIndex) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      height: 180 * size,
+                                      width: Get.width,
+                                      imageUrl:
+                                          '${data[itemIndex].bannerImage}',
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) =>
+                                          Padding(
+                                        padding: EdgeInsets.all(15.0),
+                                        child: Icon(Icons.error_outline,
+                                            color: AppColor.red),
+                                      ),
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) {
+                                        return Shimmer.fromColors(
+                                          baseColor:
+                                              Colors.grey.withOpacity(0.4),
+                                          highlightColor:
+                                              Colors.grey.withOpacity(0.2),
+                                          enabled: true,
+                                          child: Container(
+                                            color: Colors.white,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                options: CarouselOptions(
+                                  height: 180 * size,
+                                  viewportFraction: 0.9,
+                                  initialPage: controller.selectCarouselPage,
+                                  enableInfiniteScroll: false,
+                                  reverse: false,
+                                  autoPlayInterval: Duration(seconds: 1),
+                                  autoPlayAnimationDuration:
+                                      Duration(seconds: 3),
+                                  autoPlayCurve: Curves.fastOutSlowIn,
+                                  enlargeCenterPage: true,
+                                  enlargeFactor: 0.2,
+                                  onPageChanged: (index, reason) {
+                                    controller.updateCarouselPage(index);
+                                  },
+                                  scrollDirection: Axis.horizontal,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12 * size,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ...List.generate(
+                                    data.length,
+                                    (index) {
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        height: controller.selectCarouselPage ==
+                                                index
+                                            ? 12 * size
+                                            : 8 * size,
+                                        width: controller.selectCarouselPage ==
+                                                index
+                                            ? 12 * size
+                                            : 8 * size,
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              controller.selectCarouselPage ==
+                                                      index
+                                                  ? AppColor.red
+                                                  : AppColor.blue,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color:
+                                                controller.selectCarouselPage ==
+                                                        index
+                                                    ? AppColor.white
+                                                    : AppColor.transparent,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            ],
                           );
-                        },
-                      ),
-                    );
                   },
-                  options: CarouselOptions(
-                    height: 180 * size,
-                    viewportFraction: 0.9,
-                    initialPage: controller.selectCarouselPage,
-                    enableInfiniteScroll: false,
-                    reverse: false,
-                    autoPlay: false,
-                    autoPlayInterval: Duration(seconds: 3),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: true,
-                    enlargeFactor: 0.2,
-                    onPageChanged: (index, reason) {
-                      controller.updateCarouselPage(index);
-                    },
-                    scrollDirection: Axis.horizontal,
-                  ),
                 ),
-                SizedBox(
-                  height: 12 * size,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ...List.generate(
-                      3,
-                      (index) {
-                        return Container(
-                          margin: EdgeInsets.only(right: 5),
-                          height: controller.selectCarouselPage == index
-                              ? 12 * size
-                              : 8 * size,
-                          width: controller.selectCarouselPage == index
-                              ? 12 * size
-                              : 8 * size,
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: controller.selectCarouselPage == index
-                                ? AppColor.red
-                                : AppColor.blue,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.5,
-                              color: controller.selectCarouselPage == index
-                                  ? AppColor.white
-                                  : AppColor.transparent,
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                ),
+
                 SizedBox(
                   height: 13 * size,
                 ),
@@ -180,6 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollDirection: Axis.horizontal,
                             physics: BouncingScrollPhysics(),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 ...List.generate(
                                   data.length,
@@ -293,23 +346,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: data.length,
                             itemBuilder: (context, index) {
-                              return SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: Get.width,
-                                        child: HeadingTile(
-                                          name: '${data[index].eventName}',
-                                          viewMore: () {},
-                                        ),
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: Get.width,
+                                      child: HeadingTile(
+                                        name: '${data[index].eventName}',
+                                        viewMore: () {},
                                       ),
-                                      Row(
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
                                         children: [
                                           ...List.generate(
                                             10,
@@ -364,8 +415,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           )
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
