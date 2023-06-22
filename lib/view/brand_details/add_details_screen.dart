@@ -47,7 +47,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                           emailId: controller.emailTextController.text,
                           dateTime: DateTime.now().toString());
 
-                      final box = getBusinessData();
+                      final box = HiveBoxes.getBusinessData();
                       box.add(model);
                       model.save();
                       Get.back();

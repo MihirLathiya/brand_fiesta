@@ -9,6 +9,8 @@ class AppColor {
   static const Color white1 = Color.fromRGBO(215, 215, 215, 1);
   static const Color cyan = Color.fromRGBO(0, 158, 225, 1);
   static const Color grey = Color.fromRGBO(34, 34, 34, 1);
+  static const Color transparent = Colors.transparent;
+  static const textBlack = Color(0xff030D12);
 }
 
 /// GRADIENT

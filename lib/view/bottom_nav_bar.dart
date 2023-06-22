@@ -44,8 +44,9 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
               child: Container(
                 height: size * 40,
                 width: double.infinity,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(100)),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white12),
+                    borderRadius: BorderRadius.circular(100)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(

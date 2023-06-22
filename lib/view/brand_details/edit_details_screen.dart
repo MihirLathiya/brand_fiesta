@@ -70,7 +70,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                           emailId: controller.emailTextController.text,
                           dateTime: DateTime.now().toString());
 
-                      final box = getBusinessData();
+                      final box = HiveBoxes.getBusinessData();
                       box.put(widget.keyData, model);
                       model.save();
                       Get.back();

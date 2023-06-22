@@ -16,4 +16,6 @@ class AssetPath {
   static const String rateIcon = "assets/image/review_icon.svg";
   static const String delete = "assets/image/delete.png";
   static const String edit = "assets/image/edit.png";
+  static const String homeGallery = "assets/image/home_gallary.svg";
+  static const String appLogo = "assets/image/logo1.svg";
 }

@@ -42,10 +42,10 @@ class _BrandDetailsState extends State<BrandDetails> {
                 ),
 
                 /// List of Brand Details
-                getBusinessData().length == 0
+                HiveBoxes.getBusinessData().length == 0
                     ? _noData(size)
                     : ValueListenableBuilder(
-                        valueListenable: getBusinessData().listenable(),
+                        valueListenable:    HiveBoxes.getBusinessData().listenable(),
                         builder: (context, value, _) {
                           var data =
                               value.values.toList().cast<BrandDetailsModel>();
