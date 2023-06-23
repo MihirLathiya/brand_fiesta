@@ -20,10 +20,13 @@ class AllEventDetailModel extends HiveObject {
 
   @HiveField(4)
   String? dateTime;
+  @HiveField(5)
+  List? eventImage;
 
   AllEventDetailModel(
       {this.docId,
       this.upcoming,
+      this.eventImage,
       this.thumbNail,
       this.eventName,
       this.dateTime});

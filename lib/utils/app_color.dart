@@ -11,6 +11,14 @@ class AppColor {
   static const Color grey = Color.fromRGBO(34, 34, 34, 1);
   static const Color transparent = Colors.transparent;
   static const textBlack = Color(0xff030D12);
+  static const textGrey = Color(0xffADADAD);
+
+  /// Text Color
+
+  /// BULLET COLOR
+  static const bulletBlack = Colors.black;
+  static const bulletWhite = Colors.white;
+  static const bulletOrange = Colors.orange;
 }
 
 /// GRADIENT

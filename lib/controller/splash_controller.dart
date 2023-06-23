@@ -3,17 +3,13 @@ import 'dart:collection';
 
 import 'package:brand_fiesta/Hive_model/all_banner_model.dart';
 import 'package:brand_fiesta/Hive_model/all_event_data_model.dart';
-import 'package:brand_fiesta/utils/asset_path.dart';
 import 'package:brand_fiesta/utils/constant.dart';
 import 'package:brand_fiesta/utils/get_storage.dart';
 import 'package:brand_fiesta/utils/snack_bar.dart';
 import 'package:brand_fiesta/view/bottom_nav_bar.dart';
-import 'package:brand_fiesta/view/home/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
-import 'package:video_player/video_player.dart';
 import 'package:intl/intl.dart';
 
 class SplashController extends GetxController {
@@ -25,12 +21,34 @@ class SplashController extends GetxController {
   }
 
   Future<void> getData(BuildContext context) async {
+    int todayDate = 0;
+    int yesterday = 1;
     try {
-      DateTime todayDate = DateTime.now();
-      DateTime yeasterDay = PreferenceManager.getDateTime();
-    } catch (e) {}
+      todayDate =
+          int.parse(DateTime.now().toString().split(' ').first.split('-').last);
 
-    if (PreferenceManager.getDateTime() == null) {
+      yesterday = PreferenceManager.getDateTime() == null
+          ? int.parse(DateTime.now()
+              .subtract(Duration(days: 1))
+              .toString()
+              .split(' ')
+              .first
+              .split('-')
+              .last)
+          : int.parse(PreferenceManager.getDateTime()
+              .toString()
+              .split(' ')
+              .first
+              .split('-')
+              .last);
+
+      print('----yesterday--$yesterday');
+      print('----todayDate--$todayDate');
+    } catch (e) {
+      print('----ERROR--$e');
+    }
+
+    if (todayDate != yesterday) {
       updateLoadingData(true);
       try {
         final box = HiveBoxes.getAllEventData();
@@ -51,12 +69,12 @@ class SplashController extends GetxController {
           final resultList =
               Map<String, dynamic>.from(allData[i] as LinkedHashMap);
           AllEventDetailModel model = AllEventDetailModel(
-            docId: '${resultList['docId']}',
-            eventName: '${resultList['eventName']}',
-            thumbNail: '${resultList['thumbnail']}',
-            dateTime: formatTimestamp(resultList['eventDate']),
-            upcoming: resultList['upcoming'],
-          );
+              docId: '${resultList['docId']}',
+              eventName: '${resultList['eventName']}',
+              thumbNail: '${resultList['thumbnail']}',
+              dateTime: formatTimestamp(resultList['eventDate']),
+              upcoming: resultList['upcoming'],
+              eventImage: resultList['eventImage']);
           box.add(model);
           model.save();
         }
@@ -74,7 +92,7 @@ class SplashController extends GetxController {
         }
 
         updateLoadingData(false);
-
+        PreferenceManager.setDateTime(DateTime.now().toString());
         Get.offAll(() => BottomNavBarScreen());
       } catch (e) {
         print('----ERROR--_$e');
@@ -84,6 +102,7 @@ class SplashController extends GetxController {
       }
     } else {
       Get.offAll(() => BottomNavBarScreen());
+      print('----UNCALL---');
     }
   }
 

@@ -69,11 +69,14 @@ class _InfoScreenState extends State<InfoScreen> {
               children: [
                 Row(
                   children: [
-                    Text('Created with love ',
-                        style: TextStyle(
-                            color: Color(0xff6A6A6A),
-                            fontSize: font * 26,
-                            fontWeight: FontWeight.w600)),
+                    Text(
+                      'Created with love ',
+                      style: TextStyle(
+                        color: Color(0xff6A6A6A),
+                        fontSize: font * 26,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     Icon(
                       Icons.favorite,
                       color: AppColor.red,
@@ -83,11 +86,6 @@ class _InfoScreenState extends State<InfoScreen> {
                 SizedBox(
                   height: 7 * size,
                 ),
-                Text('(One stop solution for all your party needs)',
-                    style: TextStyle(
-                        color: Color(0xff6A6A6A),
-                        fontSize: font * 14,
-                        fontWeight: FontWeight.w400)),
               ],
             ),
           ),

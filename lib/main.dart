@@ -4,7 +4,9 @@ import 'package:brand_fiesta/Hive_model/all_banner_model.dart';
 import 'package:brand_fiesta/Hive_model/all_event_data_model.dart';
 import 'package:brand_fiesta/Hive_model/brand_details_model.dart';
 import 'package:brand_fiesta/controller/bottom_bar_controller.dart';
+import 'package:brand_fiesta/controller/edit_post_controller.dart';
 import 'package:brand_fiesta/controller/home_controller.dart';
+import 'package:brand_fiesta/controller/view_detail_controller.dart';
 import 'package:brand_fiesta/utils/app_color.dart';
 import 'package:brand_fiesta/utils/constant.dart';
 import 'package:brand_fiesta/view/splash/splash_screen.dart';
@@ -21,7 +23,6 @@ import 'controller/brand_details/add_deatils_controller.dart';
 import 'controller/brand_details/brand_details_controller.dart';
 import 'controller/brand_details/edit_deatils_controller.dart';
 import 'controller/splash_controller.dart';
-import 'view/bottom_nav_bar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,5 +78,7 @@ class BaseBindings extends Bindings {
     Get.lazyPut(() => BrandDetailsController(), fenix: true);
     Get.lazyPut(() => EditDetailsController(), fenix: true);
     Get.lazyPut(() => HomeController(), fenix: true);
+    Get.lazyPut(() => ViewDetailController(), fenix: true);
+    Get.lazyPut(() => EditPostController(), fenix: true);
   }
 }

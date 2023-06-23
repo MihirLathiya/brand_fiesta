@@ -5,13 +5,16 @@ import 'package:brand_fiesta/utils/app_color.dart';
 import 'package:brand_fiesta/utils/asset_path.dart';
 import 'package:brand_fiesta/utils/common_text.dart';
 import 'package:brand_fiesta/utils/constant.dart';
+import 'package:brand_fiesta/utils/snack_bar.dart';
 import 'package:brand_fiesta/utils/tiles.dart';
+import 'package:brand_fiesta/view/home/edit_post_screen.dart';
+import 'package:brand_fiesta/view/home/view_event_image_screen.dart';
+import 'package:brand_fiesta/view/home/view_more_event_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -57,7 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 InkWell(
                   borderRadius: BorderRadius.circular(5),
-                  onTap: () {},
+                  onTap: () {
+                    CommonSnackBar.getSuccessSnackBar(
+                        message: 'Coming soon....', context: context);
+                  },
                   child: Container(
                     height: size * 41,
                     width: size * 41,
@@ -200,229 +206,277 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                   },
                 ),
-
-                SizedBox(
-                  height: 13 * size,
-                ),
-
-                /// UPCOMING EVENTS
-                HeadingTile(
-                  name: 'Upcoming Events',
-                  viewMore: () {},
-                ),
-                SizedBox(
-                  height: 5 * size,
-                ),
-
                 ValueListenableBuilder<Box<AllEventDetailModel>>(
                   valueListenable: HiveBoxes.getAllEventData().listenable(),
                   builder: (context, value, _) {
                     var data =
                         value.values.toList().cast<AllEventDetailModel>();
 
-                    return data.isEmpty
-                        ? Center(
-                            child: Text(
-                            'No Data',
-                            style: TextStyle(fontSize: 15),
-                          ))
-                        : SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: BouncingScrollPhysics(),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                ...List.generate(
-                                  data.length,
-                                  (index) {
-                                    return data[index].upcoming == true
-                                        ? Padding(
-                                            padding: index == 0
-                                                ? EdgeInsets.only(
-                                                    left: 16 * size,
-                                                    right: 8 * size)
-                                                : EdgeInsets.symmetric(
-                                                    horizontal: 8.0 * size),
-                                            child: Container(
-                                              width: 100 * size,
-                                              child: Column(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {},
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20 * size),
-                                                      child: CachedNetworkImage(
-                                                        height: 100 * size,
-                                                        width: 100 * size,
-                                                        imageUrl:
-                                                            '${data[index].thumbNail}',
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  15.0),
-                                                          child: Icon(Icons
-                                                              .error_outline),
-                                                        ),
-                                                        progressIndicatorBuilder:
-                                                            (context, url,
-                                                                    downloadProgress) =>
-                                                                Shimmer
-                                                                    .fromColors(
-                                                          baseColor: Colors.grey
-                                                              .withOpacity(0.4),
-                                                          highlightColor: Colors
-                                                              .grey
-                                                              .withOpacity(0.2),
-                                                          enabled: true,
-                                                          child: Container(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5 * size,
-                                                  ),
-                                                  CommonText(
-                                                    text:
-                                                        '${data[index].eventName}',
-                                                    maxLine: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 12 * font,
-                                                    color: AppColor.white,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 3 * size,
-                                                  ),
-                                                  CommonText(
-                                                    text:
-                                                        '${data[index].dateTime}',
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 10 * font,
-                                                    color: AppColor.white,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        : SizedBox();
-                                  },
-                                )
-                              ],
-                            ),
-                          );
-                  },
-                ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 13 * size,
+                        ),
 
-                SizedBox(
-                  height: 20 * size,
-                ),
+                        /// UPCOMING EVENTS
+                        HeadingTile(
+                          name: 'Upcoming Events',
+                          viewMore: () {
+                            Get.to(
+                              () => ViewMoreEventScreen(
+                                title: 'Upcoming Events',
+                                data: data,
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: 5 * size,
+                        ),
 
-                ///
-                ValueListenableBuilder<Box<AllEventDetailModel>>(
-                  valueListenable: HiveBoxes.getAllEventData().listenable(),
-                  builder: (context, value, _) {
-                    var data =
-                        value.values.toList().cast<AllEventDetailModel>();
-
-                    return data.isEmpty
-                        ? Center(
-                            child: Text(
-                            'No Data',
-                            style: TextStyle(fontSize: 15),
-                          ))
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10.0),
-                                child: Column(
+                        data.isEmpty
+                            ? Center(
+                                child: Text(
+                                'No Data',
+                                style: TextStyle(fontSize: 15),
+                              ))
+                            : SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: BouncingScrollPhysics(),
+                                child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      width: Get.width,
-                                      child: HeadingTile(
-                                        name: '${data[index].eventName}',
-                                        viewMore: () {},
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: [
-                                          ...List.generate(
-                                            10,
-                                            (index) {
-                                              return Padding(
+                                    ...List.generate(
+                                      data.length,
+                                      (index) {
+                                        return data[index].upcoming == true
+                                            ? Padding(
                                                 padding: index == 0
                                                     ? EdgeInsets.only(
                                                         left: 16 * size,
                                                         right: 8 * size)
                                                     : EdgeInsets.symmetric(
                                                         horizontal: 8.0 * size),
-                                                child: GestureDetector(
-                                                  onTap: () {},
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20 * size),
-                                                    child: CachedNetworkImage(
-                                                      height: 100 * size,
-                                                      width: 100 * size,
-                                                      imageUrl:
-                                                          'https://wallpapercave.com/fwp/wp12455757.jpg',
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Padding(
-                                                        padding: EdgeInsets.all(
-                                                            15.0),
-                                                        child: Icon(Icons
-                                                            .error_outline),
-                                                      ),
-                                                      progressIndicatorBuilder:
-                                                          (context, url,
-                                                                  downloadProgress) =>
-                                                              Shimmer
-                                                                  .fromColors(
-                                                        baseColor: Colors.grey
-                                                            .withOpacity(0.4),
-                                                        highlightColor: Colors
-                                                            .grey
-                                                            .withOpacity(0.2),
-                                                        enabled: true,
-                                                        child: Container(
-                                                          color: Colors.white,
+                                                child: Container(
+                                                  width: 100 * size,
+                                                  child: Column(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Get.to(
+                                                            () =>
+                                                                ViewMoreImageScreen(
+                                                              title: data[index]
+                                                                  .eventName,
+                                                              data: data[index],
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20 *
+                                                                      size),
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            height: 100 * size,
+                                                            width: 100 * size,
+                                                            imageUrl:
+                                                                '${data[index].thumbNail}',
+                                                            fit: BoxFit.cover,
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(
+                                                                          15.0),
+                                                              child: Icon(Icons
+                                                                  .error_outline),
+                                                            ),
+                                                            progressIndicatorBuilder:
+                                                                (context, url,
+                                                                        downloadProgress) =>
+                                                                    Shimmer
+                                                                        .fromColors(
+                                                              baseColor: Colors
+                                                                  .grey
+                                                                  .withOpacity(
+                                                                      0.4),
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.2),
+                                                              enabled: true,
+                                                              child: Container(
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
+                                                      SizedBox(
+                                                        height: 5 * size,
+                                                      ),
+                                                      CommonText(
+                                                        text:
+                                                            '${data[index].eventName}',
+                                                        maxLine: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 12 * font,
+                                                        color: AppColor.white,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 3 * size,
+                                                      ),
+                                                      CommonText(
+                                                        text:
+                                                            '${data[index].dateTime}',
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        fontSize: 10 * font,
+                                                        color: AppColor.white,
+                                                      ),
+                                                    ],
                                                   ),
+                                                ),
+                                              )
+                                            : SizedBox();
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+
+                        SizedBox(
+                          height: 20 * size,
+                        ),
+
+                        ///
+                        data.isEmpty
+                            ? Center(
+                                child: Text(
+                                'No Data',
+                                style: TextStyle(fontSize: 15),
+                              ))
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: Get.width,
+                                          child: HeadingTile(
+                                            name: '${data[index].eventName}',
+                                            viewMore: () {
+                                              Get.to(
+                                                () => ViewMoreImageScreen(
+                                                  title:
+                                                      '${data[index].eventName}',
+                                                  data: data[index],
                                                 ),
                                               );
                                             },
-                                          )
-                                        ],
-                                      ),
+                                          ),
+                                        ),
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          physics: BouncingScrollPhysics(),
+                                          child: Row(
+                                            children: [
+                                              ...List.generate(
+                                                data[index].eventImage!.length,
+                                                (subIndex) {
+                                                  return Padding(
+                                                    padding: subIndex == 0
+                                                        ? EdgeInsets.only(
+                                                            left: 16 * size,
+                                                            right: 8 * size)
+                                                        : EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                8.0 * size),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Get.to(() =>
+                                                            EditPostScreen(
+                                                              data: data[index],
+                                                              index: subIndex,
+                                                            ));
+                                                      },
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    20 * size),
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          height: 100 * size,
+                                                          width: 100 * size,
+                                                          imageUrl:
+                                                              '${data[index].eventImage![subIndex]}',
+                                                          fit: BoxFit.cover,
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    15.0),
+                                                            child: Icon(Icons
+                                                                .error_outline),
+                                                          ),
+                                                          progressIndicatorBuilder:
+                                                              (context, url,
+                                                                      downloadProgress) =>
+                                                                  Shimmer
+                                                                      .fromColors(
+                                                            baseColor: Colors
+                                                                .grey
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            highlightColor:
+                                                                Colors.grey
+                                                                    .withOpacity(
+                                                                        0.2),
+                                                            enabled: true,
+                                                            child: Container(
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                                  );
+                                },
+                              ),
+                      ],
+                    );
                   },
-                )
+                ),
               ],
             ),
           );

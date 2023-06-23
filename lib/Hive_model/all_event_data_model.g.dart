@@ -19,6 +19,7 @@ class AllEventDetailModelAdapter extends TypeAdapter<AllEventDetailModel> {
     return AllEventDetailModel(
       docId: fields[0] as String?,
       upcoming: fields[2] as bool?,
+      eventImage: (fields[5] as List?)?.cast<dynamic>(),
       thumbNail: fields[3] as dynamic,
       eventName: fields[1] as String?,
       dateTime: fields[4] as String?,
@@ -28,7 +29,7 @@ class AllEventDetailModelAdapter extends TypeAdapter<AllEventDetailModel> {
   @override
   void write(BinaryWriter writer, AllEventDetailModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.docId)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class AllEventDetailModelAdapter extends TypeAdapter<AllEventDetailModel> {
       ..writeByte(3)
       ..write(obj.thumbNail)
       ..writeByte(4)
-      ..write(obj.dateTime);
+      ..write(obj.dateTime)
+      ..writeByte(5)
+      ..write(obj.eventImage);
   }
 
   @override

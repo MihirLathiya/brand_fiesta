@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FontTextStyle {
   static TextStyle kBlack16W600Poppins = TextStyle(
-    color: AppColor.textBlack,
+    color: AppColor.white,
     fontSize: 16.sp,
     fontWeight: FontWeight.w600,
   );
@@ -34,7 +34,7 @@ class FontTextStyle {
     fontWeight: FontWeight.w500,
   );
   static TextStyle kBlack18W600Poppins = TextStyle(
-    color: AppColor.black,
+    color: AppColor.textGrey,
     fontSize: 16.sp,
     fontWeight: FontWeight.w500,
   );
