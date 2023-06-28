@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class BrandDetailsController extends GetxController {
   TextEditingController searchTextController = TextEditingController();
 
-  int _selectedDetails = 0;
+  int _selectedDetails = -1;
 
   int get selectedDetails => _selectedDetails;
 

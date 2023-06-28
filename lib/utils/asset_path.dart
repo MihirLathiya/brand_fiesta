@@ -43,4 +43,6 @@ class AssetPath {
   static const logo50 = "assets/image/logo50.svg";
   static const image = "assets/image/image.svg";
   static const options = "assets/image/options.png";
+  static const down = "assets/image/down.svg";
+  static const no_frame = "assets/image/no_frame.png";
 }

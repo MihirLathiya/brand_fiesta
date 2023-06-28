@@ -6,20 +6,14 @@ import 'package:brand_fiesta/utils/common_text.dart';
 import 'package:brand_fiesta/utils/constant.dart';
 import 'package:brand_fiesta/utils/font_style.dart';
 import 'package:brand_fiesta/view/home/frame/frame1.dart';
-import 'package:brand_fiesta/view/home/frame/frame10.dart';
-import 'package:brand_fiesta/view/home/frame/frame2.dart';
-import 'package:brand_fiesta/view/home/frame/frame3.dart';
-import 'package:brand_fiesta/view/home/frame/frame4.dart';
-import 'package:brand_fiesta/view/home/frame/frame5.dart';
-import 'package:brand_fiesta/view/home/frame/frame6.dart';
-import 'package:brand_fiesta/view/home/frame/frame7.dart';
-import 'package:brand_fiesta/view/home/frame/frame8.dart';
-import 'package:brand_fiesta/view/home/frame/frame9.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
 
 class EditPostScreen extends StatefulWidget {
   final AllEventDetailModel? data;
@@ -33,6 +27,8 @@ class EditPostScreen extends StatefulWidget {
 class _EditPostScreenState extends State<EditPostScreen>
     with SingleTickerProviderStateMixin {
   EditPostController editPostController = Get.find();
+  WidgetsToImageController imageController = WidgetsToImageController();
+
   @override
   void initState() {
     editPostController.updateEventData(widget.data!);
@@ -46,39 +42,81 @@ class _EditPostScreenState extends State<EditPostScreen>
     final size = MediaQuery.of(context).size.height / defaultHeight;
     double font = size * 0.97;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: CommonText(
-          text: 'Post',
-          color: AppColor.white,
-          fontSize: 20 * font,
-          fontWeight: FontWeight.w600,
-        ),
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 18.0),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(100),
-            onTap: () {
-              Get.back();
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        actions: [],
-      ),
       body: GetBuilder<EditPostController>(
         builder: (controller) {
           return Column(
             children: [
               SizedBox(
-                height: 20 * size,
+                height: 125.sp,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 30 * size),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 20 * size),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(100),
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      CommonText(
+                        text: 'Post',
+                        color: AppColor.white,
+                        fontSize: 20 * font,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              final bytes = await imageController.capture();
+
+                              try {
+                                final time = DateTime.now()
+                                    .toIso8601String()
+                                    .replaceAll('.', '-')
+                                    .replaceAll(':', '-');
+                                final name = 'branding$time';
+                                final result =
+                                    await ImageGallerySaver.saveImage(bytes!,
+                                        name: name);
+                              } catch (e) {
+                                print('Failed to download the file: $e');
+                              }
+                            },
+                            child: SvgPicture.asset(
+                              AssetPath.down,
+                              height: 25 * size,
+                              width: 25 * size,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 16 * size,
+                      )
+                    ],
+                  ),
+                ),
               ),
-              buildImage(controller, 400 * size, 288 * size, 285 * size),
+
+              WidgetsToImage(
+                controller: imageController,
+                child:
+                    buildImage(controller, 400 * size, 288 * size, 285 * size),
+              ),
               SizedBox(
                 height: 24 * size,
               ),
@@ -260,10 +298,16 @@ class _EditPostScreenState extends State<EditPostScreen>
                             ),
                           ),
                           alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            controller.frameList[frameIndex],
-                            fit: BoxFit.fill,
-                          ),
+                          child: controller.frameList[frameIndex].isEmpty
+                              ? Image.asset(
+                                  AssetPath.no_frame,
+                                  height: 60,
+                                  width: 60,
+                                )
+                              : SvgPicture.asset(
+                                  controller.frameList[frameIndex],
+                                  fit: BoxFit.fill,
+                                ),
                         ),
                       );
                     },
@@ -324,46 +368,6 @@ class _EditPostScreenState extends State<EditPostScreen>
                   ),
                 ),
 
-              // /// FOR POSITION
-              // if (controller.selectType == 2)
-              //   Expanded(
-              //     child: MasonryGridView.count(
-              //       padding: EdgeInsets.symmetric(
-              //           horizontal: 16 * size, vertical: 20 * size),
-              //       physics: BouncingScrollPhysics(),
-              //       crossAxisCount: 3,
-              //       mainAxisSpacing: 7 * size,
-              //       crossAxisSpacing: 7 * size,
-              //       itemCount: controller.positionList.length,
-              //       itemBuilder: (context, positionIndex) {
-              //         return GestureDetector(
-              //           onTap: () {
-              //             controller.updateUpdatePosition(positionIndex);
-              //           },
-              //           child: Container(
-              //             height: 128 * size,
-              //             width: Get.width,
-              //             decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(8 * size),
-              //               color: AppColor.blue,
-              //               border: Border.all(
-              //                 color: controller.selectPosition == positionIndex
-              //                     ? AppColor.red
-              //                     : Colors.transparent,
-              //                 width: 2,
-              //               ),
-              //             ),
-              //             alignment: Alignment.center,
-              //             child: Text(
-              //               '${controller.positionList[positionIndex]}',
-              //               style: FontTextStyle.kBlack16W600Poppins,
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //     ),
-              //   ),
-
               /// FOR FONT
               if (controller.selectType == 2)
                 Expanded(
@@ -413,30 +417,32 @@ class _EditPostScreenState extends State<EditPostScreen>
   }
 }
 
-Padding buildImage(EditPostController controller, double height,
-    double imageHeight, double imageWidth) {
-  return controller.selectFrame == 0
-      ? BuildFrame1(controller, height, imageHeight, imageWidth)
-      : controller.selectFrame == 1
-          ? BuildFrame2(controller, height, imageHeight, imageWidth)
-          : controller.selectFrame == 2
-              ? BuildFrame3(controller, height, imageHeight, imageWidth)
-              : controller.selectFrame == 3
-                  ? BuildFrame4(controller, height, imageHeight, imageWidth)
-                  : controller.selectFrame == 4
-                      ? BuildFrame5(controller, height, imageHeight, imageWidth)
-                      : controller.selectFrame == 5
-                          ? BuildFrame6(
-                              controller, height, imageHeight, imageWidth)
-                          : controller.selectFrame == 6
-                              ? BuildFrame7(
-                                  controller, height, imageHeight, imageWidth)
-                              : controller.selectFrame == 7
-                                  ? BuildFrame8(controller, height, imageHeight,
-                                      imageWidth)
-                                  : controller.selectFrame == 8
-                                      ? BuildFrame9(controller, height,
-                                          imageHeight, imageWidth)
-                                      : BuildFrame10(controller, height,
-                                          imageHeight, imageWidth);
+buildImage(EditPostController controller, double height, double imageHeight,
+    double imageWidth) {
+  return
+      // controller.selectFrame == 0
+      //   ?
+      BuildFrame1(controller, height, imageHeight, imageWidth);
+  // : controller.selectFrame == 1
+  //     ? BuildFrame2(controller, height, imageHeight, imageWidth)
+  //     : controller.selectFrame == 2
+  //         ? BuildFrame3(controller, height, imageHeight, imageWidth)
+  //         : controller.selectFrame == 3
+  //             ? BuildFrame4(controller, height, imageHeight, imageWidth)
+  //             : controller.selectFrame == 4
+  //                 ? BuildFrame5(controller, height, imageHeight, imageWidth)
+  //                 : controller.selectFrame == 5
+  //                     ? BuildFrame6(
+  //                         controller, height, imageHeight, imageWidth)
+  //                     : controller.selectFrame == 6
+  //                         ? BuildFrame7(
+  //                             controller, height, imageHeight, imageWidth)
+  //                         : controller.selectFrame == 7
+  //                             ? BuildFrame8(controller, height, imageHeight,
+  //                                 imageWidth)
+  //                             : controller.selectFrame == 8
+  //                                 ? BuildFrame9(controller, height,
+  //                                     imageHeight, imageWidth)
+  //                                 : BuildFrame10(controller, height,
+  //                                     imageHeight, imageWidth);
 }

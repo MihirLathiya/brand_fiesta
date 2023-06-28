@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:brand_fiesta/Hive_model/all_event_data_model.dart';
 import 'package:brand_fiesta/utils/asset_path.dart';
@@ -88,16 +89,17 @@ class EditPostController extends GetxController {
 
   /// FRAME LIST
   List<String> frameList = [
+    '',
     AssetPath.frame1,
-    AssetPath.frame2,
-    AssetPath.frame3,
-    AssetPath.frame4,
-    AssetPath.frame5,
-    AssetPath.frame6,
-    AssetPath.frame7,
-    AssetPath.frame8,
-    AssetPath.frame9,
-    AssetPath.frame10,
+    // AssetPath.frame2,
+    // AssetPath.frame3,
+    // AssetPath.frame4,
+    // AssetPath.frame5,
+    // AssetPath.frame6,
+    // AssetPath.frame7,
+    // AssetPath.frame8,
+    // AssetPath.frame9,
+    // AssetPath.frame10,
   ];
 
   /// FOR TAB BAR
@@ -109,9 +111,6 @@ class EditPostController extends GetxController {
   /// FOR SELECT GRAPHIC
   int selectGraphic = 0;
 
-  /// FOR SELECT POSITION
-  int selectPosition = 1;
-
   /// FOR SELECT STOCK
   // int selectStock = 0;
   // int isShowStockAdd = 0;
@@ -122,12 +121,12 @@ class EditPostController extends GetxController {
   List fonts = [];
 
   /// FOR INFOS
-  bool profile = true;
-  bool call = true;
-  bool mail = true;
-  bool location = true;
-  bool website = true;
-  bool image = true;
+  bool profile = false;
+  bool call = false;
+  bool mail = false;
+  bool location = false;
+  bool website = false;
+  bool image = false;
 
   /// FOR profile
   updateProfileType() {
@@ -183,12 +182,6 @@ class EditPostController extends GetxController {
     update();
   }
 
-  /// FOR UPDATE POSITION
-  updateUpdatePosition(int value) {
-    selectPosition = value;
-    update();
-  }
-
   /// FOR UPDATE FONT
   updateUpdateFont(int value) {
     selectFont = value;
@@ -199,6 +192,53 @@ class EditPostController extends GetxController {
   updateGraphicList(List graphic) {
     graphicList.clear();
     graphicList = graphic;
+    update();
+  }
+
+  /// FOR IMAGE
+  Offset imagePosition = Offset(200, Get.width / 2);
+
+  void updateImagePosition(Offset newPosition) {
+    imagePosition = newPosition;
+    update();
+  }
+
+  /// FOR PROFILE
+  Offset namePosition = Offset(200, Get.width / 2);
+  void updateNamePosition(Offset newPosition) {
+    namePosition = newPosition;
+    update();
+  }
+
+  /// FOR EMAIL
+  Offset emailPosition = Offset(200, Get.width / 2);
+
+  void updateEmailPosition(Offset newPosition) {
+    emailPosition = newPosition;
+    update();
+  }
+
+  /// FOR NUMBER
+  Offset numberPosition = Offset(200, Get.width / 2);
+
+  void updateNumberPosition(Offset newPosition) {
+    numberPosition = newPosition;
+    update();
+  }
+
+  /// FOR ADDRESS
+  Offset addressPosition = Offset(200, Get.width / 2);
+
+  void updateAddressPosition(Offset newPosition) {
+    addressPosition = newPosition;
+    update();
+  }
+
+  /// FOR WEBSITE
+  Offset websitePosition = Offset(200, Get.width / 2);
+
+  void updateWebsitePosition(Offset newPosition) {
+    websitePosition = newPosition;
     update();
   }
 }

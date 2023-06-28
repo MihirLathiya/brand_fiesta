@@ -6,6 +6,7 @@ import 'package:brand_fiesta/controller/brand_details/brand_details_controller.d
 import 'package:brand_fiesta/utils/app_color.dart';
 import 'package:brand_fiesta/utils/asset_path.dart';
 import 'package:brand_fiesta/utils/constant.dart';
+import 'package:brand_fiesta/utils/get_storage.dart';
 import 'package:brand_fiesta/view/brand_details/edit_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -45,7 +46,8 @@ class _BrandDetailsState extends State<BrandDetails> {
                 HiveBoxes.getBusinessData().length == 0
                     ? _noData(size)
                     : ValueListenableBuilder(
-                        valueListenable:    HiveBoxes.getBusinessData().listenable(),
+                        valueListenable:
+                            HiveBoxes.getBusinessData().listenable(),
                         builder: (context, value, _) {
                           var data =
                               value.values.toList().cast<BrandDetailsModel>();
@@ -65,6 +67,19 @@ class _BrandDetailsState extends State<BrandDetails> {
                                     ? GestureDetector(
                                         onTap: () {
                                           controller.selectedDetails = index;
+
+                                          PreferenceManager.setName(
+                                              data[index].name);
+                                          PreferenceManager.setMobile(
+                                              data[index].contactNumber);
+                                          PreferenceManager.setEmail(
+                                              data[index].emailId);
+                                          PreferenceManager.setWebsite(
+                                              data[index].website);
+                                          PreferenceManager.setAddress(
+                                              data[index].address);
+                                          PreferenceManager.setImage(
+                                              data[index].image);
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -427,14 +442,7 @@ class _BrandDetailsState extends State<BrandDetails> {
         backgroundColor: AppColor.red,
         onPressed: () {
           Get.find<AddDetailsController>().setByDefault();
-          showModalBottomSheet(
-            isScrollControlled: true,
-            useSafeArea: false,
-            context: context,
-            builder: (context) {
-              return AddDetailsScreen();
-            },
-          );
+          Get.to(() => AddDetailsScreen());
         },
         child: CircleAvatar(
           radius: size * 16,
